@@ -1,0 +1,64 @@
+--A: 
+SELECT count(email) as Number_of_edu_emails,
+       (
+           SELECT count(email) * 100.0
+             FROM Member
+            WHERE email LIKE '%edu'
+       )
+/      (
+           SELECT count(email) 
+             FROM Member
+       ) as Percentage_of_edu_emails
+  FROM Member
+ WHERE email LIKE '%edu';
+
+
+--B
+SELECT state,
+       count( * ) AS Num_of_Banks
+  FROM bank
+ GROUP BY state;
+
+
+--C
+SELECT sum(ATM.balance) AS Total_$_in_Publix_ATMs
+  FROM ATM
+ WHERE ATM.location_name LIKE 'Publix%';
+
+
+--D
+SELECT max(ATM.balance) AS Maximum_$_in_ATMs,
+       min(ATM.balance) AS Minimum_$_in_ATMs
+  FROM ATM;
+
+
+--e
+SELECT 100.0 * (
+                   SELECT sum(ATM.num_of_tran) 
+                     FROM ATM
+                          INNER JOIN
+                          BANK ON ATM.bank_id = Bank.bank_id
+                    WHERE state = 'FL'
+               )
+/      sum(ATM.num_of_tran) AS [Percentage of  Transactions In Florida]
+  FROM ATM;
+
+SELECT sum(ATM.num_of_tran) 
+  FROM ATM;
+
+SELECT sum(ATM.num_of_tran) 
+  FROM ATM
+       INNER JOIN
+       BANK ON ATM.bank_id = Bank.bank_id
+ WHERE state = 'FL';
+
+--f
+--Unsure as to which average transaction was needed by instructions, so here are three separate select statements
+--Average transaction amounts by atm_id
+select atm_id as ATM_ID, avg(tran_amount) AS Avg_Transaction_Amt from ATM_transaction GROUP BY atm_id;
+
+--Average transactions across all ATMs
+select sum(ATM.num_of_tran) / count(ATM.atm_id) as Avg_transactions_from_all_atms from ATM;
+
+--Average transactions per every atm
+select ATM.atm_id as atm_id, avg(atm.num_of_tran) as avg_transactions from ATM WHERE ATM.num_of_tran GROUP BY ATM.atm_id;
